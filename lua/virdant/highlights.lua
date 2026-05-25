@@ -6,7 +6,7 @@ local HIGHLIGHTS = {
   -- Keywords (.k → dark olive green)
   ["@keyword"]              = { fg = "#556B2F" },
   -- Comments (.c1, .cm → gray-green, italic)
-  ["@comment"]              = { fg = "#9CA892", italic = true },
+  ["@comment"]              = { fg = "#9B9E98", italic = true },
   -- Operators (.p → brown)
   ["@operator"]             = { fg = "#8B6E47" },
   -- Punctuation (.p → brown)
