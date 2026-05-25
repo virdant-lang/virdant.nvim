@@ -5,8 +5,8 @@ local M = {}
 local HIGHLIGHTS = {
   -- Keywords (.k → dark olive green)
   ["@keyword"]              = { fg = "#556B2F" },
-  -- Comments (.c1, .cm → gray-green, italic)
-  ["@comment"]              = { fg = "#9B9E98", italic = true },
+  -- Comments (.c1, .cm → muted grey-green, italic)
+  ["@comment"]              = { fg = "#756B61", italic = true },
   -- Operators (.p → brown)
   ["@operator"]             = { fg = "#8B6E47" },
   -- Punctuation (.p → brown)
@@ -19,10 +19,10 @@ local HIGHLIGHTS = {
   ["@variable"]             = { fg = "#AE604F" },
   ["@variable.parameter"]   = { fg = "#AE604F" },
   ["@variable.member"]      = { fg = "#AE604F" },
-  -- Types (.nc → golden brown)
-  ["@type"]                 = { fg = "#B8851A" },
-  -- Built-in types (.nb → golden brown)
-  ["@type.builtin"]         = { fg = "#B8851A" },
+  -- Types (.nc → rust/terracotta)
+  ["@type"]                 = { fg = "#B83A34" },
+  -- Built-in types (.nb → deep red)
+  ["@type.builtin"]         = { fg = "#B83A34" },
   -- Constants / enum variants (.no → burnt orange)
   ["@constant"]             = { fg = "#C65D3B" },
   -- Numbers (.mi → burnt orange)
@@ -37,13 +37,30 @@ local HIGHLIGHTS = {
   ["@function"]             = { fg = "#AE604F" },
 }
 
-function M.setup(opts)
-  opts = opts or {}
-  local colors = vim.tbl_deep_extend("keep", opts.highlights or {}, HIGHLIGHTS)
+local merged
 
-  for group, attrs in pairs(colors) do
+--- Apply Virdant highlights for the virdant filetype.
+--- Called from a FileType autocommand so highlights are only set on virdant buffers.
+function M.apply()
+  merged = merged or HIGHLIGHTS
+  for group, attrs in pairs(merged) do
     vim.api.nvim_set_hl(0, group, attrs)
   end
+end
+
+--- Accept user overrides and register the filetype autocommand.
+---@param opts table|nil
+function M.setup(opts)
+  opts = opts or {}
+  merged = vim.tbl_deep_extend("keep", opts.highlights or {}, HIGHLIGHTS)
+
+  vim.api.nvim_create_autocmd("FileType", {
+    group = vim.api.nvim_create_augroup("virdant-highlights", { clear = true }),
+    pattern = "virdant",
+    callback = function()
+      M.apply()
+    end,
+  })
 end
 
 return M
